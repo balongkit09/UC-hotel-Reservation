@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans bg-gray-50 text-slate-900;
+}
+
+html.theme-dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+html.theme-dark .dashboard-shell {
+  background-color: #0b1220;
+}
+
+html.theme-dark .dashboard-shell .bg-white,
+html.theme-dark .dashboard-shell [class*='bg-white/'] {
+  background-color: #111827 !important;
+  color: #e5e7eb;
+}
+
+html.theme-dark .dashboard-shell .bg-slate-50,
+html.theme-dark .dashboard-shell [class*='bg-slate-50'] {
+  background-color: #1f2937 !important;
+}
+
+html.theme-dark .dashboard-shell .text-slate-900 {
+  color: #f3f4f6 !important;
+}
+
+html.theme-dark .dashboard-shell .text-slate-700,
+html.theme-dark .dashboard-shell .text-slate-600 {
+  color: #d1d5db !important;
+}
+
+html.theme-dark .dashboard-shell .text-slate-500,
+html.theme-dark .dashboard-shell .text-slate-400 {
+  color: #9ca3af !important;
+}
+
+html.theme-dark .dashboard-shell .border-slate-100,
+html.theme-dark .dashboard-shell .border-slate-200 {
+  border-color: #374151 !important;
+}
+
+html.theme-dark .dashboard-shell .ring-slate-100,
+html.theme-dark .dashboard-shell .ring-slate-200 {
+  --tw-ring-color: #374151 !important;
+}
+
+html.theme-dark .dashboard-shell .bg-slate-900 {
+  background-color: #0b1220 !important;
+}
+
+html.theme-dark .dashboard-shell .hover\:bg-slate-50:hover {
+  background-color: #1f2937 !important;
+}
+
+html.theme-dark .dashboard-shell .hover\:bg-slate-100:hover {
+  background-color: #2b3648 !important;
+}
+
+html.theme-dark .dashboard-shell input,
+html.theme-dark .dashboard-shell select,
+html.theme-dark .dashboard-shell textarea {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+html.theme-dark .dashboard-shell input::placeholder,
+html.theme-dark .dashboard-shell textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.theme-dark .dashboard-shell table thead {
+  background-color: #1f2937 !important;
+}
+
+html.theme-dark .dashboard-shell table tbody tr {
+  border-color: #334155 !important;
+}
+
+html.theme-dark .dashboard-shell .shadow-sm,
+html.theme-dark .dashboard-shell .shadow-md,
+html.theme-dark .dashboard-shell .shadow-lg,
+html.theme-dark .dashboard-shell .shadow-xl {
+  box-shadow: none !important;
+}
+
