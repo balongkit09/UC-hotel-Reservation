@@ -3,12 +3,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getDashboardPath } from '../utils/roles';
 import AppModal from '../components/AppModal';
+import GoogleBrandIcon from '../components/GoogleBrandIcon';
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const authError = location.state?.authError;
@@ -37,6 +39,25 @@ function LoginPage() {
       setErrorModalMessage(err?.message || 'Unable to sign in. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setErrorModalMessage('');
+    setGoogleLoading(true);
+    try {
+      const { role } = await loginWithGoogle();
+      const redirect = location.state?.from?.pathname || getDashboardPath(role);
+      navigate(redirect, { replace: true });
+    } catch (err) {
+      if (err?.code === 'auth/popup-closed-by-user') return;
+      setErrorModalMessage(
+        err?.code === 'auth/account-exists-with-different-credential'
+          ? 'An account already exists with this email using a different sign-in method.'
+          : err?.message || 'Google sign-in failed. Please try again.',
+      );
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -81,10 +102,29 @@ function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || googleLoading}
               className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white shadow-md hover:bg-orange-500 disabled:opacity-60"
             >
               {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+              <div className="relative flex justify-center text-[10px] font-medium uppercase tracking-wider">
+                <span className="bg-white px-2 text-slate-400">Or continue with</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading || googleLoading}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-60"
+            >
+              <GoogleBrandIcon />
+              {googleLoading ? 'Opening Google…' : 'Continue with Google'}
             </button>
           </form>
 

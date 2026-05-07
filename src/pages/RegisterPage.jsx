@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getDashboardPath } from '../utils/roles';
+import GoogleBrandIcon from '../components/GoogleBrandIcon';
 
 function RegisterPage() {
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,6 +28,26 @@ function RegisterPage() {
       setError(err.message || 'Unable to create account. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setError('');
+    setGoogleLoading(true);
+    try {
+      const { role } = await loginWithGoogle();
+      navigate(getDashboardPath(role), { replace: true });
+    } catch (err) {
+      if (err?.code === 'auth/popup-closed-by-user') return;
+      if (err?.code === 'auth/account-exists-with-different-credential') {
+        setError(
+          'An account already exists with this email using a different sign-in method. Try signing in instead.',
+        );
+        return;
+      }
+      setError(err?.message || 'Google sign-up failed. Please try again.');
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -82,10 +104,29 @@ function RegisterPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || googleLoading}
             className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white shadow-md hover:bg-orange-500 disabled:opacity-60"
           >
             {loading ? 'Creating account...' : 'Create Account'}
+          </button>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative flex justify-center text-[10px] font-medium uppercase tracking-wider">
+              <span className="bg-white px-2 text-slate-400">Or continue with</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={loading || googleLoading}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-60"
+          >
+            <GoogleBrandIcon />
+            {googleLoading ? 'Opening Google…' : 'Continue with Google'}
           </button>
         </form>
 

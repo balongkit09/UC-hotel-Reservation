@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   createUserWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
@@ -10,7 +11,7 @@ import {
   getDoc,
   setDoc,
 } from 'firebase/firestore';
-import { auth, db } from '../firebase/firebase';
+import { auth, db, googleProvider } from '../firebase/firebase';
 
 const AuthContext = createContext(null);
 
@@ -70,6 +71,25 @@ function useProvideAuth() {
     return { user: cred.user, role: data?.role || 'guest' };
   };
 
+  const loginWithGoogle = async () => {
+    const cred = await signInWithPopup(auth, googleProvider);
+    const userRef = doc(db, 'users', cred.user.uid);
+    let snap = await getDoc(userRef);
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        id: cred.user.uid,
+        name: cred.user.displayName || '',
+        email: cred.user.email || '',
+        role: 'guest',
+      });
+      snap = await getDoc(userRef);
+    }
+    const roleFromDoc = snap.data()?.role || 'guest';
+    setUser(cred.user);
+    setRole(roleFromDoc);
+    return { user: cred.user, role: roleFromDoc };
+  };
+
   const register = async ({ name, email, password }) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const userRef = doc(db, 'users', cred.user.uid);
@@ -96,6 +116,7 @@ function useProvideAuth() {
     role,
     loading,
     login,
+    loginWithGoogle,
     register,
     logout,
   };

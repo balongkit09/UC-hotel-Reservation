@@ -6,6 +6,7 @@ import { subscribeAllRooms } from '../services/roomsService';
 import { subscribeAllUsers } from '../services/usersService';
 import { confirmReservationPayment } from '../services/paymentsService';
 import ReservationDetailsModal from '../components/ReservationDetailsModal';
+import ReservationDashboardCharts from '../components/ReservationDashboardCharts';
 
 function StaffDashboard() {
   const { user } = useAuth();
@@ -252,6 +253,15 @@ function StaffDashboard() {
         <StatCard title="Departures Today" value={`${departuresToday.length} Guests`} badge="Normal" />
         <StatCard title="Occupancy Rate" value={`${occupancyRate}%`} badge="High" />
       </div>
+      {activeTab !== 'profile' ? (
+        <ReservationDashboardCharts
+          reservations={reservations}
+          loading={loading}
+          trendDirection="future"
+          titleTrend="Upcoming check-ins (next 14 days)"
+          titleStatus="Reservation status mix"
+        />
+      ) : null}
       {dataAccessError ? (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
           Firestore access error: {dataAccessError}. Check your Firestore rules for staff read/write permissions.

@@ -14,6 +14,7 @@ import {
 } from '../services/reservationsService';
 import { getAllUsers, subscribeAllUsers, updateUserRole } from '../services/usersService';
 import ReservationDetailsModal from '../components/ReservationDetailsModal';
+import ReservationDashboardCharts from '../components/ReservationDashboardCharts';
 import { ROOM_IMAGE_OPTIONS } from '../constants/roomImageOptions';
 
 function AdminDashboard() {
@@ -267,6 +268,7 @@ function AdminDashboard() {
               </div>
             ))}
           </div>
+          <ReservationDashboardCharts reservations={reservations} loading={loading} trendDirection="past" />
         </div>
       ) : null}
 
